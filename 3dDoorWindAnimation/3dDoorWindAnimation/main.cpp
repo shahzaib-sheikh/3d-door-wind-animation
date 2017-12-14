@@ -1,7 +1,9 @@
+#define _USE_MATH_DEFINES
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 #include "glut.h"
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
@@ -119,17 +121,39 @@ void mainDisplayFunc() {
 
 	glutSwapBuffers();
 }
+float initialAngularVelocity = 0;
+float initialAngle = 0;
+float previousTick = 0;
+float currentTick = 0;
+float calculateAngle()
+{
+
+	float timeInSec = (currentTick-previousTick)/1000;
+	float angularAcceleration = 1;
+
+
+
+	float newAngle = (initialAngularVelocity*timeInSec + (0.5*angularAcceleration*timeInSec*timeInSec)) + initialAngle;
+	initialAngularVelocity = initialAngularVelocity + angularAcceleration*timeInSec;
+	initialAngle = newAngle;
+	return newAngle*(180/M_PI);
+}
 
 void timerFunc(int time) {
+	previousTick = currentTick;
+	currentTick = time;
 	if (doorAngle >= 90) {
 		inc = -5;
 	}
 	if (doorAngle <= 0) {
 		inc = 5;
 	}
-	doorAngle += inc;
+	doorAngle = calculateAngle();
 	glutPostRedisplay();
-	glutTimerFunc(50, timerFunc, time);
+	glutTimerFunc(50, timerFunc, time + 50);
+	std::cout << "\n\n\n+++++\n";
+	std::cout << previousTick;
+	std::cout << "\n\n\n+++++\n";
 }
 
 void keyboardUpHandler(unsigned char key, int x, int y) {
@@ -137,7 +161,11 @@ void keyboardUpHandler(unsigned char key, int x, int y) {
 }
 
 void keyboardHandler(unsigned char key, int x, int y) {
-
+	if(key=='r'|| key == 'R')
+	{
+		initialAngle = 0;
+		initialAngularVelocity = 0;
+	}
 }
 
 int prex = 0;
@@ -178,7 +206,7 @@ void mouseHandler(int button, int state, int x, int y) {
 	std::cout << "cz" << cz << "\n";
 
 }
-void passiveFunc(int x,int y) {
+void passiveFunc(int x, int y) {
 	x /= 53;
 	y /= 53;
 
