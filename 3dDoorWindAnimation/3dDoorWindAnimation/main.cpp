@@ -279,6 +279,21 @@ void timerFunc(int time) {
 	
 }
 
+void reshape(int newWidth , int newHeight)
+{
+	if(newHeight == 0)
+		newHeight = 1;
+
+	float aspectRatio = (float)(newWidth / newHeight);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0,0,newWidth,newHeight);
+	gluPerspective(60,aspectRatio,0,1000);
+	glMatrixMode(GL_MODELVIEW);
+
+}
+
 void keyboardUpHandler(unsigned char key, int x, int y) {
 
 }
@@ -374,8 +389,8 @@ int main(int argc, char** argv)
 	doorBack.readBMPFile("doorBack.bmp",0);
 	doorBack.setTexture(2001);
 
-	  doorFront.readBMPFile("doorFront.bmp",0);
-	  doorFront.setTexture(2002);
+	doorFront.readBMPFile("doorFront.bmp",0);
+	doorFront.setTexture(2002);
 
 	glutDisplayFunc(mainDisplayFunc);
 	glutKeyboardFunc(keyboardHandler);
@@ -383,7 +398,8 @@ int main(int argc, char** argv)
 	glutMouseFunc(mouseHandler);
 	glutPassiveMotionFunc(passiveFunc);
 	glutTimerFunc(50, timerFunc, 0);
-
+//	glutReshapeFunc(reshape);
+	
 	initGL();
 	glutMainLoop();
 	return 0;
